@@ -48,6 +48,7 @@ class LineItemsController < ApplicationController
     respond_to do |format|
       if @line_item.save
         format.html { redirect_to @line_item.cart }
+        format.js {@current_item = @line_item }
         format.json { render json: @line_item, status: :created, location: @line_item }
       else
         format.html { render action: "new" }
@@ -58,8 +59,47 @@ class LineItemsController < ApplicationController
 
   # PUT /line_items/1
   # PUT /line_items/1.json
-  def update
-    @line_item = LineItem.find(params[:id])
+  def decrease
+    puts "DDDDDDDDDDDDValue of my params: #{params[:amount]}"
+    @cart = current_cart
+    @line_item = @cart.decrease(params[:id])
+
+    respond_to do |format|
+      if @line_item.save
+        format.html { redirect_to store_path, notice: 'Line item was successfully updated.' }
+        format.js   { @current_item = @line_item }
+        format.json { head :ok }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @line_item.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # PUT /line_items/1
+  # PUT /line_items/1.json
+  def increase
+      puts "IIIIIIIIIIIIIIValue of my params: #{params[:amount]}"
+
+    @cart = current_cart
+    @line_item = @cart.increase(params[:id])
+
+    respond_to do |format|
+      if @line_item.save
+        format.html { redirect_to store_path, notice: 'Line item was successfully updated.' }
+        format.js   { @current_item = @line_item }
+        format.json { head :ok }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @line_item.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def change
+    @cart = current_cart
+    @line_item = @cart.lineItem.find(params[:id])
+    @line_item = @cart.decrease_quantity(params[:id])
 
     respond_to do |format|
       if @line_item.update_attributes(params[:line_item])
@@ -80,7 +120,7 @@ class LineItemsController < ApplicationController
     @line_item.destroy
 
     respond_to do |format|
-      format.html { redirect_to cart, notice: "#{@line_item.product.title} removed from your cart" }
+      format.html { redirect_to store_path, notice: "#{@line_item.product.title} removed from your cart" }
       format.json { head :ok }
     end
   end
