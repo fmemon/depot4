@@ -3,7 +3,12 @@ require 'test_helper'
 class ProductsControllerTest < ActionController::TestCase
   setup do
     @product = products(:one)
-    @update = {title: 'Lorem Ipsum', description: 'Wibbles are fun', image_url: 'lorem.jpg', price: 19.95 }
+    @update = {
+      :title => "Lorem Ipsum",
+      :description => "Wibbles are fun!",
+      :image_url => "lorem.jpg",
+      :price => 19.95
+    }
   end
 
   test "should get index" do
@@ -39,7 +44,15 @@ class ProductsControllerTest < ActionController::TestCase
     put :update, id: @product.to_param, product: @update
     assert_redirected_to product_path(assigns(:product))
   end
+  
+  test "can't delete product in cart" do
+    assert_difference('Product.count', 0) do
+      delete :destroy, id: products(:ruby).to_param
+    end
 
+    assert_redirected_to products_path
+  end
+  
   test "should destroy product" do
     assert_difference('Product.count', -1) do
       delete :destroy, id: @product.to_param
@@ -47,4 +60,5 @@ class ProductsControllerTest < ActionController::TestCase
 
     assert_redirected_to products_path
   end
+  
 end
