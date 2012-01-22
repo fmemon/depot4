@@ -10,6 +10,8 @@ gem 'annotate', '~> 2.4.1.beta'
 
 gem 'will_paginate', '~> 3.0'
 
+gem 'bcrypt-ruby'
+
 gem 'minitest'
 
 # Gems used only for assets and not required
