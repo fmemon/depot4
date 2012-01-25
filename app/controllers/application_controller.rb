@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_filter :authorize
+  #before_filter :authorize
   protect_from_forgery
   
   before_filter :prepare_time_for_display
